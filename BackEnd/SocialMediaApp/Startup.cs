@@ -17,7 +17,7 @@ namespace SocialMediaApp
             app.UseCors(CorsOptions.AllowAll);
             ConfigureAuth(app);
             // Signal r Configuration
-            //app.MapSignalR();
+            app.MapSignalR();
         }
     }
 }

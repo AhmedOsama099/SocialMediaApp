@@ -1,10 +1,12 @@
 ﻿using SocialMediaApp.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Web;
 using System.Web.Http;
 
@@ -18,6 +20,12 @@ namespace SocialMediaApp.Controllers
             public string CreatedAt { get; set; }
             public string UserHandle { get; set; }
             public string ImagePath { get; set; }
+            public string CommentsCount { get; set; }
+            public object UpdatedScream { get; set; }
+
+            
+
+
 
         }
 
@@ -62,8 +70,13 @@ namespace SocialMediaApp.Controllers
                 
 
                 context.Comments.Add(comments1);
+
+                ScreamsController screamsController = new ScreamsController();
                 context.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, new CommentObject {Body = comments.Body, CreatedAt = comments.CreatedAt.ToString(), UserHandle = userHandle, ImagePath = userHandlesList[0].ImagePath });
+                var updatedScream = screamsController.Get(id);
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, new CommentObject {Body = comments.Body, CreatedAt = comments.CreatedAt.ToString(), UserHandle = userHandle, ImagePath = userHandlesList[0].ImagePath, UpdatedScream = updatedScream });
             }
             else
             {

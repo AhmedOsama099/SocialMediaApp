@@ -34,12 +34,7 @@ namespace SocialMediaApp.Controllers
     public class ScreamsController : ApiController
     {
         ApplicationDbContext context = ApplicationDbContext.Create();
-        public ScreamsController()
-        {
-            // Add the following code
-            // problem will be solved
-            //context.Configuration.ProxyCreationEnabled = false;
-        }
+       
 
         // Get All Screams 
         [Route("api/Screams/GetAll")]
@@ -228,13 +223,14 @@ namespace SocialMediaApp.Controllers
         }
 
 
+
         [Route("api/Screams/GetUserProfile")]
-        public object GetUserAndScream(string handle)
+        public object GetUserProfileDetails(string handle)
         {
 
-            var user = context.Users.Where(x => x.UserHandle == handle).FirstOrDefault();
-            var userInfo = new { handle = user.UserHandle, imageUrl = user.ImagePath, bio = user.Bio, website = user.WebSite, location = user.Location, createdAt = user.createdAt };
-
+            var user = context.Users.Where(u => u.UserHandle == handle).FirstOrDefault();
+            
+            var userInfo = new  { handle = user.UserHandle, createdAt =user.createdAt , imageUrl =user.ImagePath , bio =user.Bio , website =user.WebSite , location= user.Location };
 
             List<DataObject> container = new List<DataObject>();
             string cs = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
@@ -262,9 +258,8 @@ namespace SocialMediaApp.Controllers
 
             };
             con.Close();
-
-
-            return new { user = userInfo, screams = container };
+            return new { user = userInfo, screams=  container };
         }
+
     }
 }
