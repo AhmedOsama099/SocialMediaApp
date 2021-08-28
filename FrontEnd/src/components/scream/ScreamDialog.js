@@ -25,162 +25,179 @@ import ChatIcon from "@material-ui/icons/Chat";
 //redux
 //redux stuff
 import { connect } from "react-redux";
-import { getScream, clearErrors } from "../../redux/actions/dataActions";
+import {
+  getScream,
+  clearErrors,
+  getScreams,
+  getUserData,
+} from "../../redux/actions/dataActions";
 import theme from "../../Util/theme";
 
 const styles = () => ({
-	...theme,
-	invisibleSeparator: {
-		border: "none",
-		margin: 4,
-	},
-	profileImage: {
-		maxWidth: 200,
-		height: 200,
-		borderRadius: "50%",
-		objectFit: "cover",
-	},
-	dialogContent: {
-		padding: 20,
-	},
-	closeButton: {
-		position: "absolute",
-		left: "90%",
-	},
-	expanButton: {
-		position: "absolute",
-		left: "90%",
-	},
-	spinnerDiv: {
-		textAlign: "center",
-		margin: "50px 0",
-	},
+  ...theme,
+  invisibleSeparator: {
+    border: "none",
+    margin: 4,
+  },
+  profileImage: {
+    maxWidth: 200,
+    height: 200,
+    borderRadius: "50%",
+    objectFit: "cover",
+  },
+  dialogContent: {
+    padding: 20,
+  },
+  closeButton: {
+    position: "absolute",
+    left: "90%",
+  },
+  expanButton: {
+    position: "absolute",
+    left: "90%",
+  },
+  spinnerDiv: {
+    textAlign: "center",
+    margin: "50px 0",
+  },
 });
 
 class ScreamDialog extends Component {
-	state = {
-		open: false,
-	};
+  state = {
+    open: false,
+  };
 
-	handleOpen = async () => {
-		await this.props.getScream(this.props.ScreamId);
-		this.setState({ open: true });
-	};
-	handleClose = () => {
-		this.setState({ open: false });
-		this.props.clearErrors();
-	};
+  handleOpen = async () => {
+    await this.props.getScream(this.props.ScreamId);
+    this.setState({ open: true });
+  };
+  handleClose = () => {
+    var urlStuff = window.location.href.split("/");
 
-	render() {
-		const {
-			classes,
-			scream: {
-				ScreamId,
-				Body,
-				CreatedAt,
-				LikeCount,
-				CommentCount,
-				ImagePath,
-				UserHandle,
-				Comments,
-			},
-			UI: { loading },
-		} = this.props;
+    if (urlStuff.length <= 4) {
+      this.props.getScreams();
+    } else {
+      this.props.getUserData(urlStuff[4].toString());
+    }
 
-		const dialogMarkup = loading ? (
-			<div className={classes.spinnerDiv}>
-				<CircularProgress size={200} thickness={2} />
-			</div>
-		) : (
-			<Grid container spacing={16}>
-				<Grid item sm={5}>
-					<img
-						src={`https://localhost:44392${ImagePath}`}
-						alt="Profile"
-						className={classes.profileImage}
-					/>
-				</Grid>
-				<Grid item sm={7}>
-					<Typography
-						component={Link}
-						color="primary"
-						variant="h5"
-						to={`/users/${UserHandle}`}
-					>
-						@{UserHandle}
-					</Typography>
-					<hr className={classes.invisibleSeparator} />
-					<Typography variant="body2" color="textSecondary">
-						{dayjs(CreatedAt).format("h:m a, MMM DD YYYY")}
-					</Typography>
-					<hr className={classes.invisibleSeparator} />
-					<Typography variant="body1">{Body}</Typography>
-					<LikeButton screamId={ScreamId} />
-					<span>{LikeCount} likes</span>
-					<ButtonTemp tip="comments">
-						<ChatIcon color="primary" />
-					</ButtonTemp>
-					<span>{CommentCount} comments</span>
-				</Grid>
+    this.setState({ open: false });
+    this.props.clearErrors();
+  };
 
-				<hr className={classes.visibleSeparator} />
-				<CommentForm screamId={ScreamId} />
-				<CommentsComponent Comments={Comments} />
-			</Grid>
-		);
+  render() {
+    const {
+      classes,
+      scream: {
+        ScreamId,
+        Body,
+        CreatedAt,
+        LikeCount,
+        CommentCount,
+        ImagePath,
+        UserHandle,
+        Comments,
+      },
+      UI: { loading },
+    } = this.props;
 
-		return (
-			<Fragment>
-				<ButtonTemp
-					onClick={this.handleOpen}
-					tip="Expand scream"
-					tipClassName={classes.expanButton}
-				>
-					<UnfoldMore color="primary" />
-				</ButtonTemp>
+    const dialogMarkup = loading ? (
+      <div className={classes.spinnerDiv}>
+        <CircularProgress size={200} thickness={2} />
+      </div>
+    ) : (
+      <Grid container spacing={16}>
+        <Grid item sm={5}>
+          <img
+            src={`https://localhost:44392${ImagePath}`}
+            alt="Profile"
+            className={classes.profileImage}
+          />
+        </Grid>
+        <Grid item sm={7}>
+          <Typography
+            component={Link}
+            color="primary"
+            variant="h5"
+            to={`/users/${UserHandle}`}
+          >
+            @{UserHandle}
+          </Typography>
+          <hr className={classes.invisibleSeparator} />
+          <Typography variant="body2" color="textSecondary">
+            {dayjs(CreatedAt).format("h:m a, MMM DD YYYY")}
+          </Typography>
+          <hr className={classes.invisibleSeparator} />
+          <Typography variant="body1">{Body}</Typography>
+          <LikeButton screamId={ScreamId} />
+          <span>{LikeCount} likes</span>
+          <ButtonTemp tip="comments">
+            <ChatIcon color="primary" />
+          </ButtonTemp>
+          <span>{CommentCount} comments</span>
+        </Grid>
 
-				<Dialog
-					open={this.state.open}
-					onClose={this.handleClose}
-					fullWidth
-					maxWidth="sm"
-				>
-					<ButtonTemp
-						tip="Close"
-						onClick={this.handleClose}
-						tipClassName={classes.closeButton}
-					>
-						<CloseIcon />
-					</ButtonTemp>
-					<DialogContent className={classes.dialogContent}>
-						{dialogMarkup}
-					</DialogContent>
-				</Dialog>
-			</Fragment>
-		);
-	}
+        <hr className={classes.visibleSeparator} />
+        <CommentForm screamId={ScreamId} />
+        <CommentsComponent Comments={Comments} />
+      </Grid>
+    );
+
+    return (
+      <Fragment>
+        <ButtonTemp
+          onClick={this.handleOpen}
+          tip="Expand scream"
+          tipClassName={classes.expanButton}
+        >
+          <UnfoldMore color="primary" />
+        </ButtonTemp>
+
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          fullWidth
+          maxWidth="sm"
+        >
+          <ButtonTemp
+            tip="Close"
+            onClick={this.handleClose}
+            tipClassName={classes.closeButton}
+          >
+            <CloseIcon />
+          </ButtonTemp>
+          <DialogContent className={classes.dialogContent}>
+            {dialogMarkup}
+          </DialogContent>
+        </Dialog>
+      </Fragment>
+    );
+  }
 }
 
 ScreamDialog.propTypes = {
-	clearErrors: PropTypes.func.isRequired,
-	getScream: PropTypes.func.isRequired,
-	ScreamId: PropTypes.string.isRequired,
-	UserHandle: PropTypes.string.isRequired,
-	scream: PropTypes.object.isRequired,
-	UI: PropTypes.object.isRequired,
+  clearErrors: PropTypes.func.isRequired,
+  getScream: PropTypes.func.isRequired,
+  getScreams: PropTypes.func.isRequired,
+  getUserData: PropTypes.func.isRequired,
+  ScreamId: PropTypes.string.isRequired,
+  UserHandle: PropTypes.string.isRequired,
+  scream: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-	scream: state.data.scream,
-	UI: state.UI,
+  scream: state.data.scream,
+  UI: state.UI,
 });
 
 const mapActionsToProps = {
-	getScream,
-	clearErrors,
+  getScream,
+  getScreams,
+  getUserData,
+  clearErrors,
 };
 
 export default connect(
-	mapStateToProps,
-	mapActionsToProps
+  mapStateToProps,
+  mapActionsToProps
 )(withStyles(styles)(ScreamDialog));

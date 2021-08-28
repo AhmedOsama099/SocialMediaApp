@@ -82,6 +82,7 @@ export const submitComment = (commentData, screamId) => (dispatch) => {
     )
     .then((res) => {
       dispatch({ type: SUBMIT_COMMENT, payload: res.data });
+      dispatch({ type: SET_SCREAM, payload: res.data.UpdatedScream[0] });
       dispatch(clearErrors());
     })
     .catch((err) => {
@@ -105,8 +106,13 @@ export const deleteScream = (screamId) => (dispatch) => {
 export const getUserData = (userHandle) => (dispatch) => {
   dispatch({ type: LOADING_DATA });
   axios
-    .get(`https://localhost:44392/api/Account/GetUserProfile/`, userHandle)
-    .then((res) => dispatch({ type: SET_SCREAMS, payload: res.data.screams }))
+    .get(`https://localhost:44392/api/Screams/GetUserProfile/`, {
+      params: { handle: userHandle },
+    })
+    .then((res) => {
+      dispatch({ type: SET_SCREAMS, payload: res.data.screams });
+      console.log(res);
+    })
     .catch(() => dispatch({ type: SET_SCREAMS, payload: null }));
 };
 

@@ -228,5 +228,43 @@ namespace SocialMediaApp.Controllers
         }
 
 
+        [Route("api/Screams/GetUserProfile")]
+        public object GetUserAndScream(string handle)
+        {
+
+            var user = context.Users.Where(x => x.UserHandle == handle).FirstOrDefault();
+            var userInfo = new { handle = user.UserHandle, imageUrl = user.ImagePath, bio = user.Bio, website = user.WebSite, location = user.Location, createdAt = user.createdAt };
+
+
+            List<DataObject> container = new List<DataObject>();
+            string cs = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            SqlConnection con = new SqlConnection(cs);
+            SqlCommand cmd = new SqlCommand("GetUserScreams", con) { CommandType = System.Data.CommandType.StoredProcedure };
+            cmd.Parameters.Add("@UserHandle", System.Data.SqlDbType.NVarChar).Value = handle;
+            con.Open();
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    container.Add(new DataObject()
+                    {
+                        Body = reader["Body"].ToString(),
+                        CreatedAt = reader["CreatedAt"].ToString(),
+                        UserHandle = reader["UserHandle"].ToString(),
+                        ImagePath = reader["ImagePath"].ToString(),
+                        CommentCount = reader["CommentsNumber"].ToString(),
+                        LikeCount = reader["LikesNumber"].ToString(),
+                        ScreamId = reader["ScreamId"].ToString(),
+                    });
+                }
+
+            };
+            con.Close();
+
+
+            return new { user = userInfo, screams = container };
+        }
     }
 }

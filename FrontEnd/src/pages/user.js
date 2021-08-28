@@ -5,6 +5,9 @@ import Scream from "../components/scream/Scream";
 import StaticProfile from "../components/profile/StaticProfile";
 import Grid from "@material-ui/core/Grid";
 
+import ScreamSkeleton from "../Util/ScreamSkeleton";
+import ProfileSkeleton from "../Util/ProfileSkeleton";
+
 import { connect } from "react-redux";
 import { getUserData } from "../redux/actions/dataActions";
 
@@ -16,9 +19,9 @@ export class user extends Component {
   componentDidMount() {
     const handle = this.props.match.params.handle;
     // console.log(handle);
-    // this.props.getUserData(handle);
+    this.props.getUserData(handle);
     axios
-      .get(`https://localhost:44392/api/Account/GetUserProfile/`, {
+      .get(`https://localhost:44392/api/Screams/GetUserProfile/`, {
         params: { handle: handle },
       })
       .then((res) => this.setState({ profile: res.data.user }))
@@ -29,21 +32,21 @@ export class user extends Component {
     const { screams, loading } = this.props.data;
 
     const screamMarkup = loading ? (
-      <p>loading</p>
+      <ScreamSkeleton />
     ) : screams === null ? (
       <p>This user has no screams!!</p>
     ) : (
-      screams.map((scream) => <Scream key={scream.screamId} scream={scream} />)
+      screams?.map((scream) => <Scream key={scream.screamId} scream={scream} />)
     );
 
     return (
       <Grid container spacing={10}>
-        <Grid item sm={8} xs={12}>
+        <Grid item lg={8} sm={12} xs={12}>
           {screamMarkup}
         </Grid>
-        <Grid item sm={4} xs={12}>
+        <Grid item lg={4} sm={12} xs={12}>
           {this.state.profile === null ? (
-            <p>Loading profile...</p>
+            <ProfileSkeleton />
           ) : (
             <StaticProfile profile={this.state.profile} />
           )}

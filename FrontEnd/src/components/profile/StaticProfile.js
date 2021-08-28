@@ -11,39 +11,14 @@ import Typography from "@material-ui/core/Typography";
 import LocationOn from "@material-ui/icons/LocationOn";
 import LinkIcon from "@material-ui/icons/Link";
 import CalendarToday from "@material-ui/icons/CalendarToday";
+import theme from "../../Util/theme";
 
-const styles = (theme) => ({
-  paper: {
-    padding: 20,
-  },
-  profile: {
-    "& .image-wrapper": {
-      textAlign: "center",
-    },
-    "& .profile-image": {
-      width: 200,
-      height: 200,
-      objectFit: "cover",
-      maxWidth: "100%",
-      borderRadius: "50%",
-    },
-    "& .profile-details": {
-      textAlign: "center",
-      "& span, svg": {
-        verticalAlign: "middle",
-      },
-      "& a": {
-        color: theme.palette.primary.main,
-      },
-    },
-    "& hr": {
-      border: "none",
-      margin: "0 0 10px 0",
-    },
-  },
+const styles = () => ({
+  ...theme,
 });
 
 const StaticProfile = (props) => {
+  console.log(props);
   const {
     classes,
     profile: { handle, createdAt, imageUrl, bio, website, location },
