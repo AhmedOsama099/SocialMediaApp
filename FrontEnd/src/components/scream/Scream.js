@@ -21,87 +21,87 @@ import Typography from "@material-ui/core/Typography";
 import ChatIcon from "@material-ui/icons/Chat";
 
 const styles = {
-	card: {
-		display: "flex",
-		marginBottom: 20,
-		position: "relative",
-	},
-	image: {
-		minWidth: 200,
-	},
-	content: {
-		padding: 25,
-	},
+  card: {
+    display: "flex",
+    marginBottom: 20,
+    position: "relative",
+  },
+  image: {
+    minWidth: 200,
+  },
+  content: {
+    padding: 25,
+  },
 };
 
 class Scream extends Component {
-	render() {
-		dayjs.extend(relativeTime);
-		const {
-			classes,
-			scream: {
-				Body,
-				CreatedAt,
-				ImagePath,
-				UserHandle,
-				ScreamId,
-				LikeCount,
-				CommentCount,
-			},
-			user: {
-				authenticated,
-				credentials: { handle },
-			},
-		} = this.props;
+  render() {
+    dayjs.extend(relativeTime);
+    const {
+      classes,
+      scream: {
+        Body,
+        CreatedAt,
+        ImagePath,
+        UserHandle,
+        ScreamId,
+        LikeCount,
+        CommentCount,
+      },
+      user: {
+        authenticated,
+        credentials: { handle },
+      },
+    } = this.props;
 
-		const deleteButton =
-			authenticated && UserHandle === handle ? (
-				<DeleteScream screamId={ScreamId} />
-			) : null;
+    const deleteButton =
+      authenticated && UserHandle === handle ? (
+        <DeleteScream screamId={ScreamId} />
+      ) : null;
 
-		return (
-			<Card className={classes.card}>
-				<CardMedia
-					image={`https://localhost:44392${ImagePath}`}
-					title="Profile Image"
-					className={classes.image}
-				/>
+    return (
+      <Card className={classes.card}>
+        <CardMedia
+          image={`https://localhost:44392${ImagePath}`}
+          title="Profile Image"
+          className={classes.image}
+        />
 
-				<CardContent className={classes.content}>
-					<Typography
-						variant="h5"
-						color="primary"
-						component={Link}
-						to={`/users/${UserHandle}`}
-					>
-						{UserHandle}{" "}
-					</Typography>
-					{deleteButton}
-					<Typography variant="body2" color="textSecondary">
-						{dayjs(CreatedAt).fromNow()}
-					</Typography>
-					<Typography variant="body1">{Body}</Typography>
-					<LikeButton screamId={ScreamId} />
-					<span>{LikeCount} likes</span>
-					<ButtonTemp tip="comments">
-						<ChatIcon color="primary" />
-					</ButtonTemp>
-					<span>{CommentCount} comments</span>
-					<ScreamDialog ScreamId={ScreamId} UserHandle={UserHandle} />
-				</CardContent>
-			</Card>
-		);
-	}
+        <CardContent className={classes.content}>
+          <Typography
+            variant="h5"
+            color="primary"
+            component={Link}
+            to={`/users/${UserHandle}`}
+          >
+            {UserHandle}{" "}
+          </Typography>
+          {deleteButton}
+          <Typography variant="body2" color="textSecondary">
+            {dayjs(CreatedAt).fromNow()}
+          </Typography>
+          <Typography variant="body1">{Body}</Typography>
+          <LikeButton screamId={ScreamId} />
+          <span>{LikeCount} likes</span>
+          <ButtonTemp tip="comments">
+            <ChatIcon color="primary" />
+          </ButtonTemp>
+          <span>{CommentCount} comments</span>
+          <ScreamDialog ScreamId={ScreamId} UserHandle={UserHandle} />
+        </CardContent>
+      </Card>
+    );
+  }
 }
 
 Scream.propTypes = {
-	user: PropTypes.object.isRequired,
-	scream: PropTypes.object.isRequired,
-	classes: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  scream: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-	user: state.user,
+  user: state.user,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(Scream));

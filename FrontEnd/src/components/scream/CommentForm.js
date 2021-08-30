@@ -8,6 +8,8 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import theme from "../../Util/theme";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 //redux stuff
 import { connect } from "react-redux";
@@ -21,6 +23,7 @@ class CommentForm extends Component {
   state = {
     body: "",
     errors: {},
+    submit: false,
   };
 
   componentWillReceiveProps(nextProps) {
@@ -43,9 +46,18 @@ class CommentForm extends Component {
         { Body: this.state.body.toString() },
         this.props.screamId
       );
+      this.setState({ submit: true });
     } else {
       this.setState({ errors: { Comment: "Field can't be empty" } });
     }
+  };
+
+  handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    this.setState({ submit: false });
   };
 
   render() {
@@ -75,8 +87,24 @@ class CommentForm extends Component {
           </Button>
         </form>
         <hr className={classes.visibleSeparator} />
+
+        <Snackbar
+          open={this.state.submit}
+          autoHideDuration={2000}
+          onClose={this.handleClose}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            onClose={this.handleClose}
+            severity="success"
+          >
+            {"Comment Submitted"}
+          </MuiAlert>
+        </Snackbar>
       </Grid>
     ) : null;
+
     return commentFormMarkUp;
   }
 }
